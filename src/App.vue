@@ -2,46 +2,63 @@
   <div class="">
     <h2>Air Quality App</h2>
     <div class="wrapper">
-      <air-countries :countries='countries'></air-countries>
-
+      <city-component :countries='countries' :states="states" :cities="cities"></city-component>
     </div>
-
   </div>
 </template>
 
 <script>
 import {eventBus} from './main.js';
-import AirCountries from './components/AirCountries.vue';
-import AirCountriesName from './components/AirCountriesName.vue';
+import CityComponent from './components/CityComponent.vue';
 
 export default {
   name: 'app',
   data(){
     return {
       countries: [],
+      states: [],
       cities: [],
-      pollution: null
-
+      pollution: null,
+      key: 'c3dd44df-eff9-44b8-9f22-eb5fee8a4789',
+      selectedCountry: '',
+      selectedCity: ''
     };
   },
   mounted(){
-    fetch('http://api.airvisual.com/v2/countries?key=c3dd44df-eff9-44b8-9f22-eb5fee8a4789')
+
+    fetch(`http://api.airvisual.com/v2/countries?key=${this.key}`)
     .then(response => response.json())
-    .then(countries => this.countries = countries)
+    .then(apiResponse => this.countries = apiResponse.data)
 
-    // eventBus.$on('country-selected', (country) =>{
-    //   this.seelectedCountry = country;
-    // })
+    eventBus.$on('country-selected', (country) =>{
+      this.selectedCountry = country;
+      fetch(`http://api.airvisual.com/v2/states?country=${country}&key=${this.key}`)
+      .then(response => response.json())
+      .then(apiResponse => this.states = apiResponse.data)
+    })
 
+    eventBus.$on('state-selected', (state) =>{
+      this.selectedState = state;
+      fetch(`http://api.airvisual.com/v2/cities?state=${state}&country=${this.selectedCountry}&key=${this.key}`)
+      .then(response => response.json())
+      .then(apiResponse => this.cities = apiResponse.data)
+    })
+
+    eventBus.$on('city-selected', (city) =>{
+      this.selectedCity = city;
+      fetch(`http://api.airvisual.com/v2/city?city=${city}&state=${this.selectedState}&country=${this.selectedCountry}&key=${this.key}`)
+      .then(response => response.json())
+      .then(apiResponse => this.pollution = apiResponse.data)
+    })
 
   },
 
   components: {
-    "air-countries": AirCountries,
-    "air-countries-name": AirCountriesName
+    "city-component": CityComponent,
+
 
   }
-
+// api.airvisual.com/v2/city?city=Los Angeles&state=California&country=USA&key={{YOUR_API_KEY}}
 
 }
 </script>
