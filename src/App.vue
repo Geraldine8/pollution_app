@@ -28,6 +28,13 @@ export default {
     };
   },
   mounted(){
+    // fetch('https://developers.zomato.com/api/v2.1/categories', {
+    //   headers: {
+    //     'user-key': '068ba0cac95a295a4ba5cd3909aa17c5'
+    //   },
+    // })
+    // .then(response => response.json())
+    // .then(apiResponse => console.log(apiResponse))
 
     fetch(`http://api.airvisual.com/v2/countries?key=${this.key}`)
     .then(response => response.json())
@@ -59,6 +66,7 @@ export default {
   components: {
     "city-component": CityComponent,
     "city-details": CityDetails
+
 
 
 
