@@ -2,14 +2,17 @@
   <div class="">
     <h3></h3>
     <select v-on:change="handleSelectedCountry">
+      <option>Select</option>
       <option v-for="(country, index) in countries" :value="country.country">{{country.country}}</option>
     </select>
 
     <select v-on:change="handleSelectedState">
+      <option>Select</option>
       <option v-for="(state, index) in states" :value="state.state">{{state.state}}</option>
     </select>
 
     <select v-on:change="handleSelectedCity">
+      <option>Select</option>
       <option v-for="(city, index) in cities" :value="city.city">{{city.city}}</option>
     </select>
   </div>
@@ -22,20 +25,9 @@ import { eventBus } from '../main.js';
 export default {
   name:'city-component',
   props: ['countries', 'states', 'cities'],
-
-
-  data(){
-    return{
-      "selectedCountry": {},
-      "selectedState": {},
-      "selectedCity": {}
-    };
-  },
-
   methods: {
     handleSelectedCountry(event){
       eventBus.$emit('country-selected', event.target.value)
-
     },
 
     handleSelectedState(event){

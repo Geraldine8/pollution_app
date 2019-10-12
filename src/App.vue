@@ -3,6 +3,7 @@
     <h2>Air Quality App</h2>
     <div class="wrapper">
       <city-component :countries='countries' :states="states" :cities="cities"></city-component>
+      <city-details :cityData='cityData'></city-details>
     </div>
   </div>
 </template>
@@ -10,6 +11,7 @@
 <script>
 import {eventBus} from './main.js';
 import CityComponent from './components/CityComponent.vue';
+import CityDetails from './components/CityDetails.vue';
 
 export default {
   name: 'app',
@@ -21,7 +23,8 @@ export default {
       pollution: null,
       key: 'c3dd44df-eff9-44b8-9f22-eb5fee8a4789',
       selectedCountry: '',
-      selectedCity: ''
+      selectedCity: '',
+      cityData: null
     };
   },
   mounted(){
@@ -48,17 +51,19 @@ export default {
       this.selectedCity = city;
       fetch(`http://api.airvisual.com/v2/city?city=${city}&state=${this.selectedState}&country=${this.selectedCountry}&key=${this.key}`)
       .then(response => response.json())
-      .then(apiResponse => this.pollution = apiResponse.data)
+      .then(apiResponse => this.cityData = apiResponse.data)
     })
 
   },
 
   components: {
     "city-component": CityComponent,
+    "city-details": CityDetails
+
 
 
   }
-// api.airvisual.com/v2/city?city=Los Angeles&state=California&country=USA&key={{YOUR_API_KEY}}
+
 
 }
 </script>
