@@ -1,20 +1,24 @@
 <template lang="html">
-  <div class="">
+  <div>
     <h3></h3>
-    <select v-on:change="handleSelectedCountry">
-      <option>Select</option>
-      <option v-for="(country, index) in countries" :value="country.country">{{country.country}}</option>
-    </select>
+    <div class="select">
+      <select v-on:change="handleSelectedCountry">
+        <option>Select Country</option>
+        <option value="UK">United Kingdom</option>
+        <option v-for="(country, index) in countries" :value="country.country">{{country.country}}</option>
+      </select>
 
-    <select v-on:change="handleSelectedState">
-      <option>Select</option>
-      <option v-for="(state, index) in states" :value="state.state">{{state.state}}</option>
-    </select>
+      <select v-if="states" v-on:change="handleSelectedState">
+        <option>Select State</option>
+        <option v-for="(state, index) in states" :value="state.state">{{state.state}}</option>
+      </select>
 
-    <select v-on:change="handleSelectedCity">
-      <option>Select</option>
-      <option v-for="(city, index) in cities" :value="city.city">{{city.city}}</option>
-    </select>
+      <select v-if="cities" v-on:change="handleSelectedCity">
+        <option>Select City</option>
+        <option v-for="(city, index) in cities" :value="city.city">{{city.city}}</option>
+      </select>
+
+    </div>
   </div>
 </template>
 
@@ -44,12 +48,13 @@ export default {
 
 <style lang="css" scoped>
 
+.select {
+  text-align: center;
+  padding-bottom: 30px;
+}
 </style>
 
-<!-- What is an Event Bus? Well, it’s kind of summed up in the name itself.
-It’s a mode of transportation for one component to pass props from one
-component to another, no matter where those components are located
-in the tree.
 
-EventBus allows us to emit an event in one component and
+
+<!-- EventBus allows us to emit an event in one component and
 listen for that event in another. -->

@@ -1,21 +1,22 @@
 <template lang="html">
-  <div v-if='cityData'>
-    <div class="wrapper">
-      <div>
+  <div class="wrapper" v-if='cityData'>
+      <div class="weather-description">
         <p>Temperature: {{cityData.current.weather.tp }} °C </p>
         <p>Humidity: {{cityData.current.weather.hu}} % </p>
         <p>Pressure: {{cityData.current.weather.pr}} hPa</p>
         <p>Wind Speed: {{cityData.current.weather.ws}} m/s</p>
       </div>
-      <img :src="`images/${cityData.current.weather.ic}.png`" alt="" class="icon">
-    </div>
-    <div :class="`status status-${pollutionStatus.key}`">
-      <img :src="`images/${pollutionStatus.key}.svg`" alt="">
-      <div class="description">
-        {{pollutionStatus.description}}
-        <p>Pollution: {{cityData.current.pollution.aqius }} AQI - µg/m³</p>
+      <div class="weather-icon">
+        <img :src="`images/${cityData.current.weather.ic}.png`" alt="" class="icon">
       </div>
-    </div>
+      <div :class="`status status-${pollutionStatus.key}`">
+        <img :src="`images/${pollutionStatus.key}.svg`" alt="">
+        <div class="description">
+          {{pollutionStatus.description}}
+          <p>Pollution: {{cityData.current.pollution.aqius }} AQI - µg/m³</p>
+        </div>
+      </div>
+      <div id="map"></div>
   </div>
 </template>
 
@@ -28,6 +29,24 @@ export default {
       pollutionStatus: 'culo'
     };
   },
+  updated: function() {
+    if (this.$props.cityData.current) {
+      const coordinates = this.$props.cityData.location.coordinates;
+      const latLng = {
+        lat: coordinates[1],
+        lng: coordinates[0]
+      };
+      console.log(latLng);
+      // console.log(document.getElementById('map'));
+      const map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: latLng
+      });
+      const marker = new google.maps.Marker(
+        {position: latLng, map: map});
+      google.maps.event.trigger(map, "resize");
+    }
+  },
   beforeUpdate: function() {
     if (this.$props.cityData.current) {
       this.pollutionStatus = this.getAqs(this.$props.cityData.current.pollution.aqius);
@@ -37,39 +56,39 @@ export default {
     getAqs(airLevel) {
       switch (true) {
         case airLevel <= 50:
-          return {'key':'good', 'description': 'Air Pollution Lelvel: Good'}
+          return {'key':'good', 'description': 'Air Pollution Level: Good'}
           break;
         case airLevel <= 100:
-          return {'key':'moderate', 'description': 'Air Pollution Lelvel: Moderate'};
+          return {'key':'moderate', 'description': 'Air Pollution Level: Moderate'};
           break;
         case airLevel <= 150:
-          return {'key':'unhealthy1', 'description': 'Air Pollution Lelvel: Unhealthy for Sensitive Groups'};
+          return {'key':'unhealthy1', 'description': 'Air Pollution Level: Unhealthy for Sensitive Groups'};
           break;
         case airLevel <= 200:
-          return {'key':'unhealthy2', 'description': 'Air Pollution Lelvel: Unhealthy'};
+          return {'key':'unhealthy2', 'description': 'Air Pollution Level: Unhealthy'};
           break;
         case airLevel <= 300:
-          return {'key':'unhealthy3', 'description': 'Air Pollution Lelvel: Very Unhealthy'};
+          return {'key':'unhealthy3', 'description': 'Air Pollution Level: Very Unhealthy'};
           break;
         case airLevel <= 400:
-          return {'key':'hazardous', 'description': 'Air Pollution Lelvel: Hazardous'};
+          return {'key':'hazardous', 'description': 'Air Pollution Level: Hazardous'};
       }
-    }
+    },
   }
 }
 </script>
 
 <style lang="css" scoped>
 
-.status{
-  width: 300px;
-  padding-top: 40px;
-  padding-bottom: 40px;
+.status {
+  padding-top: 20px;
+  width: 200px;
+  height: 180px;
   text-align: center;
 }
 
 .status img {
-  width: 150px;
+  width: 100px;
   align-items: center;
 }
 
@@ -101,15 +120,51 @@ export default {
 .description p{
   margin-top: 5px;
 }
+
 .wrapper{
+  margin-left: auto;
+  margin-top: 20px;
+  margin: 0 auto;
+  width: 600px;
   display: flex;
   flex-wrap: wrap;
 }
-
+.weather-description{
+  background-color: #9FE7F5;
+  width: 200px;
+  height: 200px;
+}
+.weather-description p{
+  margin-left: 20px;
+}
+.weather-icon{
+  text-align: center;
+  background-color: #FAFAFB;
+  width: 200px;
+  height: 200px;
+}
 .icon {
-  width: 150px;
-  vertical-align:top;
-  display:inline-block;
+  margin-top: 30%;
+  width: 80px;
+  height: 80px;
   font-weight:bold;
 }
+#map {
+  height: 300px;  /* The height is 400 pixels */
+  width: 600px;  /* The width is the width of the web page */
+  overflow:visible;
+}
+
+.select {
+
+}
 </style>
+
+
+<!-- beforeUpdate: Called when data changes, before the DOM is patched.
+This is a good place to access the
+existing DOM before an update, e.g. to remove manually added event listeners. -->
+
+ <!-- beforeUpdate hook runs after data changes on your component and the update cycle begins,
+ right before the DOM is patched and re-rendered. It allows you to get the new state of
+ any reactive data on your component before it actually gets rendered -->

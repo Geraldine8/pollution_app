@@ -18,8 +18,8 @@ export default {
   data(){
     return {
       countries: [],
-      states: [],
-      cities: [],
+      states: null,
+      cities: null,
       pollution: null,
       key: 'c3dd44df-eff9-44b8-9f22-eb5fee8a4789',
       selectedCountry: '',
@@ -27,40 +27,34 @@ export default {
       cityData: null
     };
   },
-  mounted(){
-    // fetch('https://developers.zomato.com/api/v2.1/categories', {
-    //   headers: {
-    //     'user-key': '068ba0cac95a295a4ba5cd3909aa17c5'
-    //   },
-    // })
-    // .then(response => response.json())
-    // .then(apiResponse => console.log(apiResponse))
 
-    fetch(`http://api.airvisual.com/v2/countries?key=${this.key}`)
+  mounted(){
+    fetch(`https://api.airvisual.com/v2/countries?key=${this.key}`)
     .then(response => response.json())
     .then(apiResponse => this.countries = apiResponse.data)
 
     eventBus.$on('country-selected', (country) =>{
       this.selectedCountry = country;
-      fetch(`http://api.airvisual.com/v2/states?country=${country}&key=${this.key}`)
+      this.states = null
+      fetch(`https://api.airvisual.com/v2/states?country=${country}&key=${this.key}`)
       .then(response => response.json())
       .then(apiResponse => this.states = apiResponse.data)
+      this.cities = null
     })
 
     eventBus.$on('state-selected', (state) =>{
       this.selectedState = state;
-      fetch(`http://api.airvisual.com/v2/cities?state=${state}&country=${this.selectedCountry}&key=${this.key}`)
+      fetch(`https://api.airvisual.com/v2/cities?state=${state}&country=${this.selectedCountry}&key=${this.key}`)
       .then(response => response.json())
       .then(apiResponse => this.cities = apiResponse.data)
     })
 
     eventBus.$on('city-selected', (city) =>{
       this.selectedCity = city;
-      fetch(`http://api.airvisual.com/v2/city?city=${city}&state=${this.selectedState}&country=${this.selectedCountry}&key=${this.key}`)
+      fetch(`https://api.airvisual.com/v2/city?city=${city}&state=${this.selectedState}&country=${this.selectedCountry}&key=${this.key}`)
       .then(response => response.json())
       .then(apiResponse => this.cityData = apiResponse.data)
     })
-
   },
 
   components: {
@@ -77,4 +71,10 @@ export default {
 </script>
 
 <style lang="css" scoped>
+
+h2 {
+  text-align: center;
+}
+
+
 </style>
