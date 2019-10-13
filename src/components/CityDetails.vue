@@ -16,42 +16,30 @@
           <p>Pollution: {{cityData.current.pollution.aqius }} AQI - µg/m³</p>
         </div>
       </div>
-      <div id="map"></div>
+    <city-map :coordinates='cityData.location.coordinates' :key='componentKey'></city-map>
   </div>
 </template>
 
 <script>
+import CityMap from './CityMap.vue';
+
 export default {
   name: 'city-details',
   props: ['cityData'],
   data(){
     return {
-      pollutionStatus: 'culo'
+      pollutionStatus: '',
+      componentKey: 0,
     };
   },
-  updated: function() {
-    if (this.$props.cityData.current) {
-      const coordinates = this.$props.cityData.location.coordinates;
-      const latLng = {
-        lat: coordinates[1],
-        lng: coordinates[0]
-      };
-      console.log(latLng);
-      // console.log(document.getElementById('map'));
-      const map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,
-        center: latLng
-      });
-      const marker = new google.maps.Marker(
-        {position: latLng, map: map});
-      google.maps.event.trigger(map, "resize");
-    }
-  },
+
   beforeUpdate: function() {
+    this.componentKey += 1;
     if (this.$props.cityData.current) {
       this.pollutionStatus = this.getAqs(this.$props.cityData.current.pollution.aqius);
     }
   },
+
   methods: {
     getAqs(airLevel) {
       switch (true) {
@@ -73,7 +61,10 @@ export default {
         case airLevel <= 400:
           return {'key':'hazardous', 'description': 'Air Pollution Level: Hazardous'};
       }
-    },
+    }
+  },
+  components: {
+    "city-map" : CityMap
   }
 }
 </script>
@@ -149,15 +140,7 @@ export default {
   height: 80px;
   font-weight:bold;
 }
-#map {
-  height: 300px;  /* The height is 400 pixels */
-  width: 600px;  /* The width is the width of the web page */
-  overflow:visible;
-}
 
-.select {
-
-}
 </style>
 
 

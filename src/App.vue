@@ -21,10 +21,12 @@ export default {
       states: null,
       cities: null,
       pollution: null,
-      key: 'c3dd44df-eff9-44b8-9f22-eb5fee8a4789',
+      key: '69e738aa-8b22-43a3-a8ad-d12b37ab1739',
+      //key: 'c3dd44df-eff9-44b8-9f22-eb5fee8a4789',
       selectedCountry: '',
       selectedCity: '',
       cityData: null
+      // newKey: 69e738aa-8b22-43a3-a8ad-d12b37ab1739
     };
   },
 
@@ -43,6 +45,9 @@ export default {
     })
 
     eventBus.$on('state-selected', (state) =>{
+      if (state=='') {
+        return;
+      }
       this.selectedState = state;
       fetch(`https://api.airvisual.com/v2/cities?state=${state}&country=${this.selectedCountry}&key=${this.key}`)
       .then(response => response.json())
@@ -50,6 +55,9 @@ export default {
     })
 
     eventBus.$on('city-selected', (city) =>{
+      if (city=='') {
+        return;
+      }
       this.selectedCity = city;
       fetch(`https://api.airvisual.com/v2/city?city=${city}&state=${this.selectedState}&country=${this.selectedCountry}&key=${this.key}`)
       .then(response => response.json())
